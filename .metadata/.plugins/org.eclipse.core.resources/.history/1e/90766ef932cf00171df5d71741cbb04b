@@ -1,0 +1,17 @@
+package ca.mcgill.ecse420.a3;
+
+public class FineGrainTesting {
+	
+	public static void main(String[] args){
+		
+		QNode strawberry = new QNode.QNodeBuilder("strawberry").build();
+		QNode apple = new QNode.QNodeBuilder("apple").build();
+		QNode kiwi = new QNode.QNodeBuilder("kiwi").build();
+		QNode banana = new QNode.QNodeBuilder("banana").build();
+		
+		System.out.println("Fruit: " + banana.fruit + ", Hashcode: " + banana.key);
+		System.out.println("Fruit: " + apple.fruit + ", Hashcode: " + apple.key);
+		System.out.println("Fruit: " + kiwi.fruit + ", Hashcode: " + kiwi.key);
+		System.out.println("Fruit: " + strawberry.fruit + ", Hashcode: " + strawberry.key);
+	}
+}
