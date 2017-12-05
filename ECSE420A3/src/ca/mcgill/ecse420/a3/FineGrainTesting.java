@@ -65,10 +65,6 @@ public class FineGrainTesting {
 			return new QNode(toCopy);
 		}
 		
-		public synchronized boolean assertConains(){
-			
-		}
-		
 		public void runContains(){
 			QNode image = this.createImage(this.head);
 			String currentFruit = this.fruitList[rand.nextInt(fruitList.length)];
