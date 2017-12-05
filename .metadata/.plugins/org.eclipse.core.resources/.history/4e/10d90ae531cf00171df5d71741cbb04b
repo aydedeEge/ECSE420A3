@@ -1,8 +1,0 @@
-package ca.mcgill.ecse420.a3;
-
-public class FineGrainTesting {
-	
-	public static void main(String[] args){
-		QNode banana = new QNode.QNodeBuilder("banana").build();
-	}
-}

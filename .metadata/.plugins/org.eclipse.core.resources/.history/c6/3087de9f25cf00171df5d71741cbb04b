@@ -1,7 +1,0 @@
-package ca.mcgill.ecse420.a3;
-
-public class QNode {
-	public String fruit;
-	public int key;
-	public QNode next;
-}

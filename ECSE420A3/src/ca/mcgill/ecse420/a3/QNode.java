@@ -15,6 +15,13 @@ public class QNode {
 		this.next = qbb.next;
 	}
 	
+	public QNode(QNode existingNode){
+		this.fruit = existingNode.fruit;
+		this.key = existingNode.key;
+		this.nodeLock = existingNode.nodeLock;
+		this.next = existingNode.next;
+	}
+	
 	public static class QNodeBuilder {
 		private String fruit;
 		private int key;
@@ -37,5 +44,120 @@ public class QNode {
 		}
 	}
 	
+	public boolean contains(String fruit){
+		QNode curr = this, pred = this;
+		int key = fruit.hashCode();
+		
+		curr.nodeLock.lock();
+		pred.nodeLock.lock();
+		
+		try{
+			while(curr.key<=key){
+				if(fruit==curr.fruit){
+					return true;
+				}
+
+				pred.nodeLock.unlock();
+				pred = curr;
+
+				curr = curr.next;
+				try{
+					curr.nodeLock.lock();
+				}catch(NullPointerException ex){
+					return false;
+				}
+				
+			}
+			return false;
+		}finally{
+			pred.nodeLock.unlock();
+			if(curr!=null) curr.nodeLock.unlock();
+		}
+	}
 	
+	public boolean remove(String fruit){
+		if(!this.contains(fruit)){
+			return false;
+		}
+		
+		QNode curr = this, pred = this;
+		int key = fruit.hashCode();
+		
+		curr.nodeLock.lock();
+		pred.nodeLock.lock();
+		
+		try{
+			while(curr.key<=key || curr!=null){
+				if(fruit.equals(curr.fruit)){
+					pred.next = curr.next;
+					curr.next = null;
+					return true;
+				}
+				pred.nodeLock.unlock();
+				pred = curr;
+
+				curr = curr.next;
+				try{
+					curr.nodeLock.lock();
+				}catch(NullPointerException ex){
+					return false;
+				}
+			}
+			return false;
+		}finally{
+			pred.nodeLock.unlock();
+			if(curr!=null) curr.nodeLock.unlock();
+		}
+		
+	}
+	
+	public boolean add(String fruit){
+		//Can't add node with same fruit value.
+		if(this.contains(fruit)){
+			return false;
+		}
+		
+		QNode curr = this, pred = this, newNode;
+		int key = fruit.hashCode();
+		
+		curr.nodeLock.lock();
+		pred.nodeLock.lock();
+		
+		try{
+			while(pred.key<=key){
+				if(pred.key<key && curr.key>key){
+					newNode = new QNode.QNodeBuilder(fruit).setNext(curr).build();
+					pred.next = newNode;
+					return true;
+				}
+				pred.nodeLock.unlock();
+				pred = curr;
+
+				curr = curr.next;
+				
+				try{
+					curr.nodeLock.lock();
+				//Reached end of list
+				}catch(NullPointerException ex){
+					newNode = new QNode.QNodeBuilder(fruit).build();
+					pred.next = newNode;
+					return true;
+				}
+			}
+			return false;
+		}finally{
+			pred.nodeLock.unlock();
+			if(curr!=null) curr.nodeLock.unlock();
+		}
+	}
+	
+	public String toString(){
+		String toString = "";
+		QNode head = this;
+		while(head.next!=null){
+			toString = toString + head.fruit;
+			head = head.next;
+		}
+		return toString;
+	}
 }
